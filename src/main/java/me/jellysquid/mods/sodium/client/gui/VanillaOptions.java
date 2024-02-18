@@ -11,9 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class VanillaOptions {
-
-    public static boolean inRun = false;
-
     // For reduce log while changing render distance or another double options
     private static final Set<Runnable> DOUBLE_OPTIONS_RUNNABLE = new HashSet<>();
 
