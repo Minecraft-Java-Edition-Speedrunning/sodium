@@ -12,11 +12,8 @@ import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage
 import me.jellysquid.mods.sodium.client.render.chunk.backends.multidraw.MultidrawChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.util.UnsafeUtil;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.options.AttackIndicator;
-import net.minecraft.client.options.GraphicsMode;
+import net.minecraft.client.options.*;
 import net.minecraft.client.options.Option;
-import net.minecraft.client.options.ParticlesMode;
 import net.minecraft.client.util.Window;
 
 import java.util.ArrayList;
@@ -42,24 +39,8 @@ public class SodiumGameOptionPages {
                 .add(OptionImpl.createBuilder(int.class, vanillaOpts)
                         .setName("Brightness")
                         .setTooltip("Controls the brightness (gamma) of the game.")
-                        .setControl(opt -> new SliderControl(opt, 0, 100, 1, ControlValueFormatter.brightness()))
+                        .setControl(opt -> new SliderControl(opt, 0, 500, 1, ControlValueFormatter.brightness()))
                         .setBinding((opts, value) -> opts.gamma = value * 0.01D, (opts) -> (int) (opts.gamma / 0.01D))
-                        .build())
-                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
-                        .setName("Clouds")
-                        .setTooltip("Controls whether or not clouds will be visible.")
-                        .setControl(TickBoxControl::new)
-                        .setBinding((opts, value) -> {
-                            opts.quality.enableClouds = value;
-
-                            if (MinecraftClient.isFabulousGraphicsOrBetter()) {
-                                Framebuffer framebuffer = MinecraftClient.getInstance().worldRenderer.getCloudsFramebuffer();
-                                if (framebuffer != null) {
-                                    framebuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
-                                }
-                            }
-                        }, (opts) -> opts.quality.enableClouds)
-                        .setImpact(OptionImpact.LOW)
                         .build())
                 .build());
 
@@ -99,7 +80,7 @@ public class SodiumGameOptionPages {
                         .setTooltip("If enabled, the game's frame rate will be synchronized to the monitor's refresh rate, making for a generally smoother experience " +
                                 "at the expense of overall input latency. This setting might reduce performance if your system is too slow.")
                         .setControl(TickBoxControl::new)
-                        .setBinding(new VanillaBooleanOptionBinding(Option.VSYNC))
+                        .setBinding(new VanillaBooleanOptionBinding(net.minecraft.client.options.Option.VSYNC))
                         .setImpact(OptionImpact.VARIES)
                         .build())
                 .add(OptionImpl.createBuilder(int.class, vanillaOpts)
@@ -120,7 +101,7 @@ public class SodiumGameOptionPages {
                         .setName("View Bobbing")
                         .setTooltip("If enabled, the player's view will sway and bob when moving around. Players who suffer from motion sickness can benefit from disabling this.")
                         .setControl(TickBoxControl::new)
-                        .setBinding(new VanillaBooleanOptionBinding(Option.VIEW_BOBBING))
+                        .setBinding(new VanillaBooleanOptionBinding(Option.VSYNC))
                         .build())
                 .add(OptionImpl.createBuilder(AttackIndicator.class, vanillaOpts)
                         .setName("Attack Indicator")
@@ -151,19 +132,13 @@ public class SodiumGameOptionPages {
                 .build());
 
         groups.add(OptionGroup.createBuilder()
-                .add(OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, sodiumOpts)
+                .add(OptionImpl.createBuilder(CloudRenderMode.class, vanillaOpts)
                         .setName("Clouds Quality")
                         .setTooltip("Controls the quality of rendered clouds in the sky.")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.GraphicsQuality.class))
-                        .setBinding((opts, value) -> opts.quality.cloudQuality = value, opts -> opts.quality.cloudQuality)
+                        .setControl(option -> new CyclingControl<>(option, CloudRenderMode.class, new String[] { "Off", "Fast", "Fancy" }))
+                        .setBinding((opts, value) -> opts.cloudRenderMode = value, opts -> opts.cloudRenderMode)
                         .setImpact(OptionImpact.LOW)
-                        .build())
-                .add(OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, sodiumOpts)
-                        .setName("Weather Quality")
-                        .setTooltip("Controls the quality of rain and snow effects.")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.GraphicsQuality.class))
-                        .setBinding((opts, value) -> opts.quality.weatherQuality = value, opts -> opts.quality.weatherQuality)
-                        .setImpact(OptionImpact.MEDIUM)
+                        .setFlags(OptionFlag.REQUIRES_CLOUD_RELOAD)
                         .build())
                 .add(OptionImpl.createBuilder(ParticlesMode.class, vanillaOpts)
                         .setName("Particle Quality")
@@ -172,15 +147,13 @@ public class SodiumGameOptionPages {
                         .setBinding((opts, value) -> opts.particles = value, (opts) -> opts.particles)
                         .setImpact(OptionImpact.MEDIUM)
                         .build())
-                .add(OptionImpl.createBuilder(SodiumGameOptions.LightingQuality.class, sodiumOpts)
+                .add(OptionImpl.createBuilder(AoMode.class, vanillaOpts)
                         .setName("Smooth Lighting")
-                        .setTooltip("Controls the quality of smooth lighting effects.\n" +
-                                "\nOff - No smooth lighting" +
-                                "\nLow - Smooth block lighting only" +
-                                "\nHigh (new!) - Smooth block and entity lighting")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.LightingQuality.class))
-                        .setBinding((opts, value) -> opts.quality.smoothLighting = value, opts -> opts.quality.smoothLighting)
-                        .setImpact(OptionImpact.MEDIUM)
+                        .setTooltip("Controls whether blocks will be smoothly lit and shaded. This slightly increases the amount " +
+                                "of time needed to re-build a chunk, but doesn't affect frame rates.")
+                        .setControl(option -> new CyclingControl<>(option, AoMode.class, new String[] { "Off", "Minimum", "Maximum" }))
+                        .setBinding((opts, value) -> opts.ao = value, opts -> opts.ao)
+                        .setImpact(OptionImpact.LOW)
                         .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
                         .build())
                 .add(OptionImpl.createBuilder(int.class, vanillaOpts)
@@ -206,14 +179,6 @@ public class SodiumGameOptionPages {
                         .setTooltip("If enabled, basic shadows will be rendered beneath mobs and other entities.")
                         .setControl(TickBoxControl::new)
                         .setBinding((opts, value) -> opts.entityShadows = value, opts -> opts.entityShadows)
-                        .setImpact(OptionImpact.LOW)
-                        .build())
-                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
-                        .setName("Vignette")
-                        .setTooltip("If enabled, a vignette effect will be rendered on the player's view. This is very unlikely to make a difference " +
-                                "to frame rates unless you are fill-rate limited.")
-                        .setControl(TickBoxControl::new)
-                        .setBinding((opts, value) -> opts.quality.enableVignette = value, opts -> opts.quality.enableVignette)
                         .setImpact(OptionImpact.LOW)
                         .build())
                 .build());
@@ -353,5 +318,24 @@ public class SodiumGameOptionPages {
                 .build());
 
         return new OptionPage("Advanced", ImmutableList.copyOf(groups));
+    }
+
+    public static OptionPage speedrun() {
+        List<OptionGroup> groups = new ArrayList<>();
+
+        groups.add(OptionGroup.createBuilder()
+                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
+                        .setName("Use Planar Fog")
+                        .setTooltip("If enabled, planar fog will be used rather than radial. Fewer chunks will be hidden by fog, which may noticeably reduce performance " +
+                                "in areas with thick fog such as in the nether. This is vanilla behavior on systems where GL_NV_fog_distance is unavailable, but is not " +
+                                "considered desirable for any reason other than visibility. This option is not included in official releases of Sodium.")
+                        .setControl(TickBoxControl::new)
+                        .setBinding((opts, value) -> opts.speedrun.usePlanarFog = value, opts -> opts.speedrun.usePlanarFog)
+                        .setImpact(OptionImpact.MEDIUM)
+                        .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
+                        .build()
+                )
+                .build());
+        return new OptionPage("Speedrun", ImmutableList.copyOf(groups));
     }
 }

@@ -1,80 +1,41 @@
 plugins {
-    id 'fabric-loom' version '0.6-SNAPSHOT'
-    id 'org.ajoberstar.grgit' version '4.1.0'
+    id "fabric-loom" version "1.5-SNAPSHOT"
 }
 
-def getVersionMetadata() {
-    // CI builds version numbers
-    def build_id = System.getenv("RELEASE_TAG")
-    if (build_id != null) {
-        return build_id
-    }
+version = "$mod_version+$target_version"
+group = maven_group
 
-    // Development builds
-    if (grgit == null) {
-        return "dev"
-    }
-
-    // Named development builds
-    def id = grgit.head().abbreviatedId
-    if (!grgit.status().clean) {
-        id += "-dirty"
-    }
-
-    return "rev.${id}"
+base {
+    archivesName = archives_name
 }
 
-archivesBaseName = "${project.mod_id}-${project.minecraft_version}"
-version = "${getVersionMetadata()}"
+loom {
+    accessWidenerPath = file("src/main/resources/sodium.accesswidener")
+}
 
-minecraft {
-    refmapName = "mixins.sodium.refmap.json"
-    accessWidener = file("src/main/resources/sodium.accesswidener")
+repositories {
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    //to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-}
-
-if (project.use_third_party_mods) {
-    repositories {
-        maven { url = "https://jitpack.io" }
-    }
-
-    dependencies {
-        // DataBreaker applies a number of patches to eliminate the loading of data fixers
-        // This greatly reduces the amount of time needed to start the game, but is generally unsafe in production
-        modRuntime ("com.github.SuperCoder7979:databreaker:${project.databreaker_version}") {
-            transitive = false
-        }
-    }
+    minecraft "com.mojang:minecraft:$minecraft_version"
+    mappings "net.fabricmc:yarn:$yarn_mappings:v2"
+    modImplementation "net.fabricmc:fabric-loader:$loader_version"
 }
 
 processResources {
-    inputs.property "mod_id", project.mod_id
-    inputs.property "version", project.version
-
     filesMatching("fabric.mod.json") {
-        expand "mod_id": project.mod_id, "version": project.version
+        expand "version": project.version
     }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
 }
 
 java {
-    withSourcesJar()
-
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
-    }
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain { languageVersion = JavaLanguageVersion.of(8) }
 }
 
 jar {

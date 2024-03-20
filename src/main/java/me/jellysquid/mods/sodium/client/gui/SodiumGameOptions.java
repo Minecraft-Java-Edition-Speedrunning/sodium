@@ -3,10 +3,8 @@ package me.jellysquid.mods.sodium.client.gui;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
-import me.jellysquid.mods.sodium.client.gui.options.TextProvider;
-import me.jellysquid.mods.sodium.client.render.chunk.backends.multidraw.MultidrawChunkRenderBackend;
-import net.minecraft.client.options.GraphicsMode;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,13 +12,11 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 public class SodiumGameOptions {
-    public final QualitySettings quality = new QualitySettings();
     public final AdvancedSettings advanced = new AdvancedSettings();
     public final NotificationSettings notifications = new NotificationSettings();
+    public final SpeedrunSettings speedrun = new SpeedrunSettings();
 
     private Path configPath;
 
@@ -33,7 +29,7 @@ public class SodiumGameOptions {
         public boolean useChunkMultidraw = true;
 
         public boolean animateOnlyVisibleTextures = true;
-        public boolean useEntityCulling = true;
+        public boolean useEntityCulling = false;
         public boolean useParticleCulling = true;
         public boolean useFogOcclusion = true;
         public boolean useCompactVertexFormat = true;
@@ -42,56 +38,12 @@ public class SodiumGameOptions {
         public boolean ignoreDriverBlacklist = false;
     }
 
-    public static class QualitySettings {
-        public GraphicsQuality cloudQuality = GraphicsQuality.DEFAULT;
-        public GraphicsQuality weatherQuality = GraphicsQuality.DEFAULT;
-
-        public boolean enableVignette = true;
-        public boolean enableClouds = true;
-
-        public LightingQuality smoothLighting = LightingQuality.HIGH;
-    }
-
     public static class NotificationSettings {
         public boolean hideDonationButton = false;
     }
 
-    public enum GraphicsQuality implements TextProvider {
-        DEFAULT("Default"),
-        FANCY("Fancy"),
-        FAST("Fast");
-
-        private final String name;
-
-        GraphicsQuality(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getLocalizedName() {
-            return this.name;
-        }
-
-        public boolean isFancy(GraphicsMode graphicsMode) {
-            return (this == FANCY) || (this == DEFAULT && (graphicsMode == GraphicsMode.FANCY || graphicsMode == GraphicsMode.FABULOUS));
-        }
-    }
-
-    public enum LightingQuality implements TextProvider {
-        HIGH("High"),
-        LOW("Low"),
-        OFF("Off");
-
-        private final String name;
-
-        LightingQuality(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getLocalizedName() {
-            return this.name;
-        }
+    public static class SpeedrunSettings {
+        public boolean usePlanarFog = true;
     }
 
     private static final Gson GSON = new GsonBuilder()
@@ -101,15 +53,17 @@ public class SodiumGameOptions {
             .create();
 
     public static SodiumGameOptions load(Path path) {
-        SodiumGameOptions config;
+        SodiumGameOptions config = null;
 
-        if (Files.exists(path)) {
+        boolean exists = Files.exists(path);
+        if (exists) {
             try (FileReader reader = new FileReader(path.toFile())) {
                 config = GSON.fromJson(reader, SodiumGameOptions.class);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not parse config", e);
+            } catch (IOException | JsonSyntaxException e) {
+                SodiumClientMod.logger().warn("Could not parse config, falling back to default");
             }
-        } else {
+        }
+        if (!exists || config == null) {
             config = new SodiumGameOptions();
         }
 

@@ -52,6 +52,7 @@ public class SodiumOptionsGUI extends Screen {
         this.pages.add(SodiumGameOptionPages.general());
         this.pages.add(SodiumGameOptionPages.quality());
         this.pages.add(SodiumGameOptionPages.advanced());
+        this.pages.add(SodiumGameOptionPages.speedrun());
     }
 
     public void setPage(OptionPage page) {
@@ -293,7 +294,6 @@ public class SodiumOptionsGUI extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == GLFW.GLFW_KEY_P && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
             MinecraftClient.getInstance().openScreen(new VideoOptionsScreen(this.prevScreen, MinecraftClient.getInstance().options));
-
             return true;
         }
 
