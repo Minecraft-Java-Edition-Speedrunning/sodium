@@ -39,10 +39,7 @@
     "features.model.MixinMultipartBakedModel",
     "features.options.MixinBackgroundRenderer",
     "features.options.MixinGameOptions",
-    "features.options.MixinInGameHud",
-    "features.options.MixinMinecraftClient",
     "features.options.MixinOptionsScreen",
-    "features.options.MixinWorldRenderer",
     "features.particle.cull.MixinParticleManager",
     "features.particle.fast_render.MixinBillboardParticle",
     "features.render_layer.MixinRenderLayers",
@@ -52,7 +49,6 @@
   ],
   "mixins" : [
     "features.debug.DebugHudAccessor",
-    "features.options.MinecraftServerMixin",
     "features.options.MixinDoubleOption",
     "features.options.MixinVideoOptionsScreen"
   ]

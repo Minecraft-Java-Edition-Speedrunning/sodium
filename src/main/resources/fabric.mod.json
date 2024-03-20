@@ -5,7 +5,10 @@
   "name": "Sodium Mac 1.16.1",
   "description": "Sodium is a free and open-source optimization mod for Minecraft which improves frame rates and reduces lag spikes. \nThis is an unofficial backport of JellySquid's original mod.",
   "authors": [
-    "jan-leila"
+    "jellysquid3",
+    "MrMangoHands",
+    "jan-leila",
+    "RedLime"
   ],
   "contact": {
     "homepage": "https://github.com/Minecraft-Java-Edition-Speedrunning/mcsr-sodium-mac-1.16.1",

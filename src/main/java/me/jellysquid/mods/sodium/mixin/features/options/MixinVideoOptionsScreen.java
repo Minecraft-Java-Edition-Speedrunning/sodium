@@ -34,14 +34,14 @@ public class MixinVideoOptionsScreen extends GameOptionsScreen {
     private static final Option[] OPTIONS = {
             Option.GRAPHICS,
             Option.RENDER_DISTANCE,
-            VanillaOptions.SMOOTH_LIGHTING,
+            Option.AO,
             Option.FRAMERATE_LIMIT,
             Option.VSYNC,
             Option.VIEW_BOBBING,
             Option.GUI_SCALE,
             Option.ATTACK_INDICATOR,
             Option.GAMMA,
-            VanillaOptions.CLOUDS,
+            Option.CLOUDS,
             Option.FULLSCREEN,
             Option.PARTICLES,
             Option.MIPMAP_LEVELS,
@@ -94,7 +94,7 @@ public class MixinVideoOptionsScreen extends GameOptionsScreen {
             VanillaOptions.applySettingsChanges();
 
 
-        if(!VanillaOptions.inRun && keyCode == GLFW.GLFW_KEY_P && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
+        if(MinecraftClient.getInstance().world == null && keyCode == GLFW.GLFW_KEY_P && (modifiers & GLFW.GLFW_MOD_SHIFT) != 0) {
             MinecraftClient.getInstance().openScreen(new SodiumOptionsGUI(this.parent));
             return true;
         }
