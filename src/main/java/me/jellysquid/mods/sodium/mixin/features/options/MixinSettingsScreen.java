@@ -24,7 +24,7 @@ public class MixinSettingsScreen extends Screen {
     @Inject(method = "method_19828(Lnet/minecraft/client/gui/widget/ButtonWidget;)V", at = @At("HEAD"), cancellable = true)
     private void open(ButtonWidget widget, CallbackInfo ci) {
         if (this.minecraft != null) {
-            if (SodiumClientMod.options().settings.forceVanillaSettings || MinecraftClient.getInstance().world != null) {
+            if (MinecraftClient.getInstance().world != null) {
                 this.minecraft.openScreen(new VideoOptionsScreen(this, this.minecraft.options));
             } else {
                 this.minecraft.openScreen(new SodiumOptionsGUI(this));
