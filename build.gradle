@@ -1,69 +1,37 @@
 plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
+    id "fabric-loom" version "1.5-SNAPSHOT"
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+version = "$mod_version+$target_version"
+group = maven_group
 
-archivesBaseName = "sodium-${project.minecraft_version}-backport-fabric"
-version = project.mod_version + "-SNAPSHOT"
-group = project.maven_group
-
-def build_release = System.getenv("BUILD_RELEASE") == "true"
-def build_id = System.getenv("BUILD_ID")
-def action = System.getenv("GITHUB_ACTIONS")
-
-def getDate() {
-    return new Date().format('yyyy-MM-dd')
+base {
+    archivesName = archives_name
 }
 
-if (action != null) {
-    version += "+" + getDate()
-}
-
-if (build_id != null) {
-    version += "+build.${build_id}"
-}
-
-minecraft {
-    refmapName = "mixins.sodium.refmap.json"
-    accessWidener = file("src/main/resources/sodium.accesswidener")
+loom {
+    accessWidenerPath = file("src/main/resources/sodium.accesswidener")
 }
 
 dependencies {
-    //to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+    minecraft "com.mojang:minecraft:$minecraft_version"
+    mappings "net.fabricmc:yarn:$yarn_mappings:v2"
+    modImplementation "net.fabricmc:fabric-loader:$loader_version"
 }
 
 processResources {
-    inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-
+    filesMatching("fabric.mod.json") {
         expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
     }
 }
 
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
 }
 
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain { languageVersion = JavaLanguageVersion.of(8) }
 }
 
 jar {

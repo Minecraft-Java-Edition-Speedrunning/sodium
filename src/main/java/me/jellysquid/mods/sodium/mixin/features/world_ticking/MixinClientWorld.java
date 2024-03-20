@@ -37,7 +37,7 @@ public abstract class MixinClientWorld extends World {
         super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
     }
 
-    @Redirect(method = "doRandomBlockDisplayTicks", at = @At(value = "NEW", target = "java/util/Random"))
+    @Redirect(method = "doRandomBlockDisplayTicks", at = @At(value = "NEW", target = "()Ljava/util/Random;"))
     private Random redirectRandomTickRandom() {
         return new XoRoShiRoRandom();
     }

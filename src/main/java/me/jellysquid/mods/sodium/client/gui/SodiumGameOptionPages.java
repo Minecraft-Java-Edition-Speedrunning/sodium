@@ -12,9 +12,8 @@ import me.jellysquid.mods.sodium.client.gui.options.storage.MinecraftOptionsStor
 import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage;
 import me.jellysquid.mods.sodium.client.util.UnsafeUtil;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.options.AttackIndicator;
 import net.minecraft.client.options.Option;
-import net.minecraft.client.options.ParticlesOption;
+import net.minecraft.client.options.*;
 import net.minecraft.client.util.Window;
 
 import java.util.ArrayList;
@@ -40,15 +39,8 @@ public class SodiumGameOptionPages {
                 .add(OptionImpl.createBuilder(int.class, vanillaOpts)
                         .setName("Brightness")
                         .setTooltip("Controls the brightness (gamma) of the game.")
-                        .setControl(opt -> new SliderControl(opt, 0, 100, 1, ControlValueFormatter.brightness()))
+                        .setControl(opt -> new SliderControl(opt, 0, 500, 1, ControlValueFormatter.brightness()))
                         .setBinding((opts, value) -> opts.gamma = value * 0.01D, (opts) -> (int) (opts.gamma / 0.01D))
-                        .build())
-                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
-                        .setName("Clouds")
-                        .setTooltip("Controls whether or not clouds will be visible.")
-                        .setControl(TickBoxControl::new)
-                        .setBinding((opts, value) -> opts.quality.enableClouds = value, (opts) -> opts.quality.enableClouds)
-                        .setImpact(OptionImpact.LOW)
                         .build())
                 .build());
 
@@ -140,19 +132,12 @@ public class SodiumGameOptionPages {
                 .build());
 
         groups.add(OptionGroup.createBuilder()
-                .add(OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, sodiumOpts)
+                .add(OptionImpl.createBuilder(CloudRenderMode.class, vanillaOpts)
                         .setName("Clouds Quality")
                         .setTooltip("Controls the quality of rendered clouds in the sky.")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.GraphicsQuality.class))
-                        .setBinding((opts, value) -> opts.quality.cloudQuality = value, opts -> opts.quality.cloudQuality)
+                        .setControl(option -> new CyclingControl<>(option, CloudRenderMode.class, new String[] { "Off", "Fast", "Fancy" }))
+                        .setBinding((opts, value) -> opts.cloudRenderMode = value, opts -> opts.cloudRenderMode)
                         .setImpact(OptionImpact.LOW)
-                        .build())
-                .add(OptionImpl.createBuilder(SodiumGameOptions.GraphicsQuality.class, sodiumOpts)
-                        .setName("Weather Quality")
-                        .setTooltip("Controls the quality of rain and snow effects.")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.GraphicsQuality.class))
-                        .setBinding((opts, value) -> opts.quality.weatherQuality = value, opts -> opts.quality.weatherQuality)
-                        .setImpact(OptionImpact.MEDIUM)
                         .build())
                 .add(OptionImpl.createBuilder(ParticlesOption.class, vanillaOpts)
                         .setName("Particle Quality")
@@ -161,15 +146,13 @@ public class SodiumGameOptionPages {
                         .setBinding((opts, value) -> opts.particles = value, (opts) -> opts.particles)
                         .setImpact(OptionImpact.MEDIUM)
                         .build())
-                .add(OptionImpl.createBuilder(SodiumGameOptions.LightingQuality.class, sodiumOpts)
+                .add(OptionImpl.createBuilder(AoOption.class, vanillaOpts)
                         .setName("Smooth Lighting")
-                        .setTooltip("Controls the quality of smooth lighting effects.\n" +
-                                "\nOff - No smooth lighting" +
-                                "\nLow - Smooth block lighting only" +
-                                "\nHigh (new!) - Smooth block and entity lighting")
-                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.LightingQuality.class))
-                        .setBinding((opts, value) -> opts.quality.smoothLighting = value, opts -> opts.quality.smoothLighting)
-                        .setImpact(OptionImpact.MEDIUM)
+                        .setTooltip("Controls whether blocks will be smoothly lit and shaded. This slightly increases the amount " +
+                                "of time needed to re-build a chunk, but doesn't affect frame rates.")
+                        .setControl(option -> new CyclingControl<>(option, AoOption.class, new String[] { "Off", "Minimum", "Maximum" }))
+                        .setBinding((opts, value) -> opts.ao = value, opts -> opts.ao)
+                        .setImpact(OptionImpact.LOW)
                         .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
                         .build())
                 .add(OptionImpl.createBuilder(int.class, vanillaOpts)
@@ -186,14 +169,6 @@ public class SodiumGameOptionPages {
                         .setTooltip("If enabled, basic shadows will be rendered beneath mobs and other entities.")
                         .setControl(TickBoxControl::new)
                         .setBinding((opts, value) -> opts.entityShadows = value, opts -> opts.entityShadows)
-                        .setImpact(OptionImpact.LOW)
-                        .build())
-                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
-                        .setName("Vignette")
-                        .setTooltip("If enabled, a vignette effect will be rendered on the player's view. This is very unlikely to make a difference " +
-                                "to frame rates unless you are fill-rate limited.")
-                        .setControl(TickBoxControl::new)
-                        .setBinding((opts, value) -> opts.quality.enableVignette = value, opts -> opts.quality.enableVignette)
                         .setImpact(OptionImpact.LOW)
                         .build())
                 .build());
