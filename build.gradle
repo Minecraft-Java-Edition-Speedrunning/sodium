@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:$minecraft_version"
-    mappings "com.github.redlime:yarn:$yarn_mappings:v2"
+    mappings "dev.tildejustin:yarn:$yarn_mappings:v2"
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
 }
 

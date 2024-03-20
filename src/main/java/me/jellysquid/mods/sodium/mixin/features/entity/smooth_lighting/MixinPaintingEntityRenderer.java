@@ -1,9 +1,9 @@
 package me.jellysquid.mods.sodium.mixin.features.entity.smooth_lighting;
 
-import me.jellysquid.mods.sodium.client.SodiumClientMod;
-import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
 import me.jellysquid.mods.sodium.client.model.light.EntityLighter;
 import me.jellysquid.mods.sodium.client.render.entity.EntityLightSampler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.options.AoOption;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -40,7 +40,7 @@ public abstract class MixinPaintingEntityRenderer extends EntityRenderer<Paintin
      */
     @Redirect(method = "method_4074", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;getLightmapCoordinates(Lnet/minecraft/world/BlockRenderView;Lnet/minecraft/util/math/BlockPos;)I"))
     public int redirectLightmapCoord(BlockRenderView world, BlockPos pos) {
-        if (SodiumClientMod.options().quality.smoothLighting == SodiumGameOptions.LightingQuality.HIGH) {
+        if (MinecraftClient.getInstance().options.ao == AoOption.MAX) {
             return EntityLighter.getBlendedLight(this, this.entity, tickDelta);
         } else {
             return WorldRenderer.getLightmapCoordinates(world, pos);
