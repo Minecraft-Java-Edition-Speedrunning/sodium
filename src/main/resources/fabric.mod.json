@@ -43,7 +43,8 @@
         "sodium.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.8.0"
+        "fabricloader": ">=0.8.0",
+        "speedrunapi": "*"
     },
     "breaks": {
         "optifabric": "*",
