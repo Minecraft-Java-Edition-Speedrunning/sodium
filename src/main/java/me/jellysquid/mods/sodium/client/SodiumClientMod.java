@@ -24,7 +24,8 @@ public class SodiumClientMod implements ClientModInitializer {
 
         MOD_VERSION = mod.getMetadata()
                 .getVersion()
-                .getFriendlyString();
+                .getFriendlyString()
+                .split("\\+")[0];
     }
 
     public static SodiumGameOptions options() {
