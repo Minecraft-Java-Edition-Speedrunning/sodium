@@ -30,6 +30,8 @@ public class MixinVideoOptionsScreen extends GameOptionsScreen {
 
     @Redirect(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/widget/ButtonListWidget;addAll([Lnet/minecraft/client/options/Option;)V"))
     private void optionsSwap(ButtonListWidget list, Option[] old_options) {
+        Option.GAMMA.setMax(this.minecraft.world == null ? 5 : 1);
+        ((DoubleOptionAccessor) Option.GAMMA).setStep(this.minecraft.world == null ? 0.01f : 0); // 0.01f step ensures we get an exact .2f so "Bright" shows up even when slider goes to 500
         List<Option> options = new ArrayList<>(Arrays.asList(old_options));
         SodiumGameOptions.SpeedrunSettings speedrunSettings = SodiumClientMod.options().speedrun;
         if (speedrunSettings.showEntityCulling) {

@@ -6,6 +6,9 @@
     "injectors": {
         "defaultRequire": 1
     },
+    "overwrites": {
+        "conformVisibility": true
+    },
     "client": [
         "core.frustum.MixinFrustum",
         "core.matrix.MixinMatrix3f",
@@ -28,6 +31,7 @@
         "features.chunk_rendering.MixinClientChunkManager",
         "features.chunk_rendering.MixinClientChunkManager$MixinClientChunkMap",
         "features.chunk_rendering.MixinWorldRenderer",
+        "features.debug.DebugHudAccessor",
         "features.debug.MixinDebugHud",
         "features.entity.fast_render.MixinCuboid",
         "features.entity.fast_render.MixinModelPart",
@@ -38,9 +42,13 @@
         "features.matrix_stack.MixinMatrixStack",
         "features.matrix_stack.MixinVertexConsumer",
         "features.model.MixinMultipartBakedModel",
+        "features.options.DoubleOptionAccessor",
         "features.options.MixinBackgroundRenderer",
+        "features.options.MixinDoubleOption",
         "features.options.MixinGameOptions",
         "features.options.MixinInGameHud",
+        "features.options.MixinOption",
+        "features.options.MixinVideoOptionsScreen",
         "features.particle.cull.FrustumAccessor",
         "features.particle.cull.MixinParticleManager",
         "features.particle.fast_render.MixinBillboardParticle",
@@ -49,10 +57,5 @@
         "features.texture_tracking.MixinSprite",
         "features.texture_tracking.MixinSpriteIdentifier",
         "features.world_ticking.MixinClientWorld"
-    ],
-    "mixins": [
-        "features.debug.DebugHudAccessor",
-        "features.options.MixinDoubleOption",
-        "features.options.MixinVideoOptionsScreen"
-  ]
+    ]
 }
