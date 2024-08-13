@@ -10,12 +10,12 @@ base {
     archivesName = archives_name
 }
 
-repositories {
-    maven { url "https://jitpack.io" }
-}
-
 loom {
     accessWidenerPath = file("src/main/resources/sodium.accesswidener")
+}
+
+repositories {
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
