@@ -14,7 +14,7 @@ public abstract class MixinDebugHud {
     private List<String> redirectRightTextEarly(DebugHud instance) {
         List<String> strings = ((DebugHudAccessor) instance).invokeGetRightText();
         strings.add("");
-        strings.add("MCSR Sodium Mac" + SodiumClientMod.getVersion());
+        strings.add("MCSR Sodium Mac " + SodiumClientMod.getVersion());
         return strings;
     }
 }
