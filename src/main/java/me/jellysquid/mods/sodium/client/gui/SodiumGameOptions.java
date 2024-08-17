@@ -39,6 +39,28 @@ public class SodiumGameOptions implements SpeedrunConfig {
         public boolean animateOnlyVisibleTextures = true;
         public boolean useMemoryIntrinsics = true;
         public boolean disableDriverBlacklist = false;
+
+        @Override
+        public @Nullable SpeedrunOption<?> parseField(Field field, SpeedrunConfig config, String... idPrefix) {
+            if (ChunkRendererBackendOption.class.equals(field.getType())) {
+                return new SpeedrunConfigAPI.CustomOption.Builder<ChunkRendererBackendOption>(config, this, field, idPrefix)
+                        .createWidget((option, innerConfig, configStorage, optionField) -> new ButtonWidget(0, 0, 150, 20, option.getText(), button -> {
+                            ChunkRendererBackendOption[] options = ChunkRendererBackendOption.getAvailableOptions(SodiumClientMod.options().advanced.disableDriverBlacklist);
+                            ChunkRendererBackendOption current = option.get();
+                            int index = -1;
+                            for (int i = 0; i < options.length; ++i) {
+                                if (options[i].equals(current)) {
+                                    index = i;
+                                }
+                            }
+                            option.set(options[(index + 1) % options.length]);
+                            button.setMessage(option.getText());
+                        }))
+                        .build();
+            }
+            // this is how you call default super methods
+            return SpeedrunConfigStorage.super.parseField(field, config, idPrefix);
+        }
     }
 
     public static class QualitySettings implements SpeedrunConfigStorage {
@@ -103,26 +125,5 @@ public class SodiumGameOptions implements SpeedrunConfig {
     @Override
     public String modID() {
         return "sodium";
-    }
-
-    @Override
-    public @Nullable SpeedrunOption<?> parseField(Field field, SpeedrunConfig config, String... idPrefix) {
-        if (ChunkRendererBackendOption.class.equals(field.getType())) {
-            return new SpeedrunConfigAPI.CustomOption.Builder<ChunkRendererBackendOption>(this, this, field, idPrefix)
-                    .createWidget((option, innerConfig, configStorage, optionField) -> new ButtonWidget(0, 0, 150, 20, option.getText(), button -> {
-                        ChunkRendererBackendOption[] options = ChunkRendererBackendOption.getAvailableOptions(SodiumClientMod.options().advanced.disableDriverBlacklist);
-                        ChunkRendererBackendOption current = option.get();
-                        int index = -1;
-                        for (int i = 0; i < options.length; ++i) {
-                            if (options[i].equals(current)) {
-                                index = i;
-                            }
-                        }
-                        option.set(options[(index + 1) % options.length]);
-                        button.setMessage(option.getText());
-                    }))
-                    .build();
-        }
-        return SpeedrunConfig.super.parseField(field, config, idPrefix);
     }
 }
