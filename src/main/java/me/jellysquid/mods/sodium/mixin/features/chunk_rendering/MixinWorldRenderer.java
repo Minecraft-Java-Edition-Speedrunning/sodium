@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -36,6 +37,12 @@ public abstract class MixinWorldRenderer implements WorldRendererExtended {
     @Override
     public SodiumWorldRenderer getSodiumWorldRenderer() {
         return renderer;
+    }
+
+    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;<init>(I)V"))
+    private int nullifyVisibleChunksList(int capacity) {
+        // Sodium doesn't use this list, so we prevent the initial capacity of 69696 to be allocated
+        return 0;
     }
 
     @Redirect(method = "reload", at = @At(value = "FIELD", target = "Lnet/minecraft/client/options/GameOptions;viewDistance:I", ordinal = 1))
