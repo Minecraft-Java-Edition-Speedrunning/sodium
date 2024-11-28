@@ -30,8 +30,16 @@ public class SodiumGameOptions implements SpeedrunConfig {
     public final SpeedrunSettings speedrun = new SpeedrunSettings();
 
     public static class AdvancedSettings implements SpeedrunConfigStorage {
-        @Config.Numbers.Whole.Bounds(min = 0, max = 32)
-        public int chunkUpdateThreads = 0;
+        @Config.Numbers.Whole.Bounds(min = 0, max = 64)
+        public int maxChunkThreads;
+        @Config.Numbers.Whole.Bounds(min = 0, max = 64)
+        public int targetChunkThreads;
+        @Config.Numbers.Whole.Bounds(min = 0, max = 64)
+        public int initialChunkThreads;
+        @Config.Numbers.Whole.Bounds(min = 1, max = 2000)
+        public int quickThreadCreationInterval = 100;
+        @Config.Numbers.Whole.Bounds(min = 1, max = 10000)
+        public int slowThreadCreationInterval = 1000;
         public ChunkRendererBackendOption chunkRendererBackend = ChunkRendererBackendOption.BEST;
         public boolean useChunkFaceCulling = true;
         public boolean useCompactVertexFormat = true;

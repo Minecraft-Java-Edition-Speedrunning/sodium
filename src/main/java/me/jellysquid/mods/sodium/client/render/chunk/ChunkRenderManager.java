@@ -462,6 +462,8 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         if (!futures.isEmpty()) {
             this.backend.upload(new FutureDequeDrain<>(futures));
         }
+
+        this.builder.createMoreThreads();
     }
 
     public void markDirty() {
