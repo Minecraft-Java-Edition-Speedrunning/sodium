@@ -39,7 +39,7 @@ public abstract class MixinWorldRenderer implements WorldRendererExtended {
         return renderer;
     }
 
-    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;<init>(I)V"))
+    @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lit/unimi/dsi/fastutil/objects/ObjectArrayList;<init>(I)V", remap = false))
     private int nullifyVisibleChunksList(int capacity) {
         // Sodium doesn't use this list, so we prevent the initial capacity of 69696 to be allocated
         return 0;
