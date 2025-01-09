@@ -134,11 +134,6 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
         thread.start();
 
         this.threads.add(thread);
-
-        // Helper debug message. Prints at most once per reload, so shouldn't noticeably increase log spam.
-        if (this.threads.size() == this.hardLimitThreads) {
-            LOGGER.info("Reached maximum Sodium builder threads of {}", this.hardLimitThreads);
-        }
         this.lastThreadAddition = System.currentTimeMillis();
     }
 
