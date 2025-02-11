@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+// ensure mac sodium is launched before StandardSettings with priority
 @Config(init = Config.InitPoint.POSTLAUNCH, priority = 500)
 public class SodiumGameOptions implements SpeedrunConfig {
     @Config.Category("quality")
