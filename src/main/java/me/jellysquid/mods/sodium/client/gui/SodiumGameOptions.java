@@ -1,12 +1,12 @@
 package me.jellysquid.mods.sodium.client.gui;
 
+import me.contaria.speedrunapi.config.api.SpeedrunConfig;
+import me.contaria.speedrunapi.config.api.SpeedrunConfigStorage;
+import me.contaria.speedrunapi.config.api.annotations.Config;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.multidraw.MultidrawChunkRenderBackend;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.WorldRenderer;
-import org.mcsr.speedrunapi.config.api.SpeedrunConfig;
-import org.mcsr.speedrunapi.config.api.SpeedrunConfigStorage;
-import org.mcsr.speedrunapi.config.api.annotations.Config;
 
 public class SodiumGameOptions implements SpeedrunConfig {
     @Config.Category("quality")
