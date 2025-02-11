@@ -1,5 +1,10 @@
 package me.jellysquid.mods.sodium.client.gui;
 
+import me.contaria.speedrunapi.config.SpeedrunConfigAPI;
+import me.contaria.speedrunapi.config.api.SpeedrunConfig;
+import me.contaria.speedrunapi.config.api.SpeedrunConfigStorage;
+import me.contaria.speedrunapi.config.api.SpeedrunOption;
+import me.contaria.speedrunapi.config.api.annotations.Config;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl20.GL20ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl30.GL30ChunkRenderBackend;
@@ -8,19 +13,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.WorldRenderer;
 import org.jetbrains.annotations.Nullable;
-import org.mcsr.speedrunapi.config.SpeedrunConfigAPI;
-import org.mcsr.speedrunapi.config.SpeedrunConfigContainer;
-import org.mcsr.speedrunapi.config.api.SpeedrunConfig;
-import org.mcsr.speedrunapi.config.api.SpeedrunConfigStorage;
-import org.mcsr.speedrunapi.config.api.SpeedrunOption;
-import org.mcsr.speedrunapi.config.api.annotations.Config;
-import org.mcsr.speedrunapi.config.api.annotations.InitializeOn;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-@InitializeOn(InitializeOn.InitPoint.POSTLAUNCH)
+// ensure mac sodium is launched before StandardSettings with priority
+@Config(init = Config.InitPoint.POSTLAUNCH, priority = 500)
 public class SodiumGameOptions implements SpeedrunConfig {
     @Config.Category("quality")
     public final QualitySettings quality = new QualitySettings();
