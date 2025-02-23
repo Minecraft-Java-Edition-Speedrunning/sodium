@@ -179,6 +179,8 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         this.lastCameraPitch = pitch;
         this.lastCameraYaw = yaw;
 
+        this.chunkRenderManager.unloadPending();
+
         profiler.swap("chunk_update");
 
         this.chunkRenderManager.updateChunks();
