@@ -117,7 +117,6 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
 
     public void update(Camera camera, FrustumExtended frustum, int frame, boolean spectator) {
         this.reset();
-        this.unloadPending();
 
         this.setup(camera);
         this.iterateChunks(camera, frustum, frame, spectator);
@@ -286,7 +285,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         this.visibleChunkCount = 0;
     }
 
-    private void unloadPending() {
+    public void unloadPending() {
         while (!this.unloadQueue.isEmpty()) {
             this.unloadQueue.dequeue()
                     .delete();
