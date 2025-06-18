@@ -44,7 +44,7 @@
     ],
     "depends": {
         "fabricloader": ">=0.8.0",
-        "speedrunapi": "*"
+        "speedrunapi": ">=2.0"
     },
     "breaks": {
         "optifabric": "*",
