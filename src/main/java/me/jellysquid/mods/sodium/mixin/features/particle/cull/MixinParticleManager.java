@@ -68,7 +68,7 @@ public class MixinParticleManager {
             Box box = particle.getBoundingBox();
 
             // Hack: Grow the particle's bounding box in order to work around mis-behaved particles
-            if (this.cullingFrustum.isVisible(box.x1 - 1.0D, box.y1 - 1.0D, box.z1 - 1.0D, box.x2 + 1.0D, box.y2 + 1.0D, box.z2 + 1.0D)) {
+            if (((FrustumAccessor) this.cullingFrustum).callIsVisible(box.x1 - 1.0D, box.y1 - 1.0D, box.z1 - 1.0D, box.x2 + 1.0D, box.y2 + 1.0D, box.z2 + 1.0D)) {
                 filtered.add(particle);
             }
         }
