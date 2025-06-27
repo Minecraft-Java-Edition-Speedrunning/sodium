@@ -1,5 +1,5 @@
 plugins {
-    id "fabric-loom" version "1.5-SNAPSHOT"
+    id "fabric-loom" version "1.9-SNAPSHOT"
     id "maven-publish"
 }
 
@@ -14,10 +14,17 @@ loom {
     accessWidenerPath = file("src/main/resources/sodium.accesswidener")
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:$minecraft_version"
     mappings "net.fabricmc:yarn:$yarn_mappings:v2"
     modImplementation "net.fabricmc:fabric-loader:$loader_version"
+    modImplementation ("com.github.contariaa:speedrunapi:$speedrunapi_version") {
+        transitive = false
+    }
 }
 
 processResources {
@@ -28,6 +35,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
+    options.compilerArgs << "-XDenableSunApiLintControl" << "-Xlint:-sunapi"
 }
 
 java {
