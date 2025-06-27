@@ -1,26 +1,18 @@
 package me.jellysquid.mods.sodium.client.gui.vanilla.builders;
 
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
-import me.jellysquid.mods.sodium.client.gui.options.OptionFlag;
-import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage;
 import org.apache.commons.lang3.Validate;
 
-import java.util.EnumSet;
-import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public abstract class OptionBuilder<P, T, U> {
-
-    static final SodiumOptionsStorage sodiumOpts = new SodiumOptionsStorage();
-
     private String key;
     private String text;
     private BiFunction<U, T, String> textGetter;
     private Function<SodiumGameOptions, U> getter;
     private BiConsumer<SodiumGameOptions, U> setter;
-    private final Set<OptionFlag> localFlags = EnumSet.noneOf(OptionFlag.class);
 
     abstract P self();
 
@@ -32,16 +24,6 @@ public abstract class OptionBuilder<P, T, U> {
     public P setText(String text){
         this.text = text;
         return  self();
-    }
-
-    private static Set<OptionFlag> flags;
-    static {
-        getFlags();
-    }
-    public static Set<OptionFlag> getFlags(){
-        Set<OptionFlag> oldFlags = flags;
-        flags = EnumSet.noneOf(OptionFlag.class);
-        return oldFlags;
     }
 
     public P setGetter(Function<SodiumGameOptions, U> getter){
@@ -64,11 +46,6 @@ public abstract class OptionBuilder<P, T, U> {
         return self();
     }
 
-    public P flag(OptionFlag flag){
-        localFlags.add(flag);
-        return self();
-    }
-
     String getKey(){
         Validate.notNull(key, "Key must be specified");
         return key;
@@ -80,12 +57,6 @@ public abstract class OptionBuilder<P, T, U> {
 
     Function<SodiumGameOptions, U> getGetter(){
         Validate.notNull(getter, "Getter must be specified");
-        if(!localFlags.isEmpty()){
-            return (value) -> {
-                flags.addAll(localFlags);
-                return getter.apply(value);
-            };
-        }
         return getter;
     }
 

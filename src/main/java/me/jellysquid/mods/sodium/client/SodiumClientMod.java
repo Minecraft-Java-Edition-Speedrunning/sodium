@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 public class SodiumClientMod implements ClientModInitializer {
-    private static SodiumGameOptions CONFIG;
+    public static SodiumGameOptions CONFIG;
     private static Logger LOGGER;
 
     private static String MOD_VERSION;
@@ -29,10 +29,6 @@ public class SodiumClientMod implements ClientModInitializer {
     }
 
     public static SodiumGameOptions options() {
-        if (CONFIG == null) {
-            CONFIG = loadConfig();
-        }
-
         return CONFIG;
     }
 
@@ -42,13 +38,6 @@ public class SodiumClientMod implements ClientModInitializer {
         }
 
         return LOGGER;
-    }
-
-    private static SodiumGameOptions loadConfig() {
-        SodiumGameOptions config = SodiumGameOptions.load(new File("config/sodium-options.json"));
-        onConfigChanged(config);
-
-        return config;
     }
 
     public static void onConfigChanged(SodiumGameOptions options) {
