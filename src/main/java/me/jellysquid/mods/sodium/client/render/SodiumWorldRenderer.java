@@ -47,7 +47,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     private int renderDistance;
 
     private double lastCameraX, lastCameraY, lastCameraZ;
-    private double lastCameraPitch, lastCameraYaw;
+    private double lastCameraPitch, lastCameraYaw, lastFov;
 
     private boolean useEntityCulling;
 
@@ -145,9 +145,10 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
         float pitch = camera.getPitch();
         float yaw = camera.getYaw();
+        double fov = client.options.fov;
 
         boolean dirty = cameraPos.x != this.lastCameraX || cameraPos.y != this.lastCameraY || cameraPos.z != this.lastCameraZ ||
-                pitch != this.lastCameraPitch || yaw != this.lastCameraYaw;
+                pitch != this.lastCameraPitch || yaw != this.lastCameraYaw || fov != this.lastFov;
 
         if (dirty) {
             this.chunkRenderManager.markDirty();
@@ -158,6 +159,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         this.lastCameraZ = cameraPos.z;
         this.lastCameraPitch = pitch;
         this.lastCameraYaw = yaw;
+        this.lastFov = fov;
 
         profiler.swap("chunk_update");
 
@@ -322,7 +324,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
      * @return True if the entity is visible, otherwise false
      */
     public boolean isEntityVisible(Entity entity) {
-        if (!this.useEntityCulling) {
+        if (!this.getUseEntityCulling()) {
             return true;
         }
 
