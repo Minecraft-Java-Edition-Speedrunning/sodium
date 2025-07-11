@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
@@ -41,6 +42,12 @@ public class MixinVideoOptionsScreen extends GameOptionsScreen {
             options.add(VanillaOptions.FOG_OCCLUSION);
         }
         list.addAll(options.toArray(new Option[0]));
+    }
+
+    @Inject(method = "removed", at = @At("HEAD"))
+    private void resetGammaOptionProperties(CallbackInfo ci) {
+        Option.GAMMA.setMax(1);
+        ((DoubleOptionAccessor) Option.GAMMA).setStep(0);
     }
 
     @Inject(method = "mouseReleased", at = @At("RETURN"))
